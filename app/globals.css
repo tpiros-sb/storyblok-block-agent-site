@@ -3,3 +3,13 @@ body { margin: 0; font-family: system-ui, sans-serif; line-height: 1.5; }
 .grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
 .teaser h2 { font-size: 2rem; margin: 0 0 1rem; }
 .feature { padding: 1rem; border: 1px solid #ddd; border-radius: 0.5rem; }
+.talk { max-width: 44rem; margin: 0 auto; padding: 2rem 1rem; display: grid; gap: 0.75rem; }
+.talk h1 { font-size: 2.2rem; line-height: 1.15; margin: 0; }
+.talk p { margin: 0; }
+.talk-meta, .talk-topics { font-size: 0.85rem; color: #5b6475; text-transform: capitalize; }
+.talk-speaker { font-weight: 600; }
+.related { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #ddd; display: grid; gap: 0.75rem; }
+.related h2 { margin: 0; font-size: 1.2rem; }
+.related ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.75rem; }
+.related li { display: grid; gap: 0.2rem; }
+.related li span, .related-empty { color: #5b6475; font-size: 0.92rem; }
