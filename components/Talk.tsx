@@ -31,27 +31,74 @@ async function relatedLinks(picks: RelatedPick[]) {
   return new Map<string, string>(data.stories.map((story: { uuid: string; full_slug: string }) => [story.uuid, story.full_slug]));
 }
 
+function initials(name: string) {
+  const parts = name.trim().split(/\s+/);
+  return [parts[0], parts.length > 1 ? parts[parts.length - 1] : '']
+    .map((part) => part.charAt(0))
+    .join('')
+    .toUpperCase();
+}
+
 export default async function Talk({ blok }: { blok: TalkBlok }) {
   const picks = blok.related_talks?.picks ?? [];
   const links = await relatedLinks(picks);
 
-  return (
-    <article {...storyblokEditable(blok)} className="talk">
-      <p className="talk-meta">
-        {[blok.day?.replace('day-', 'Day '), blok.start_time, blok.room, blok.duration && `${blok.duration} min`, blok.level]
-          .filter(Boolean)
-          .join(' · ')}
-      </p>
-      <h1>{blok.title}</h1>
-      <p className="talk-speaker">
-        {blok.speaker_name}
-        {blok.speaker_company ? `, ${blok.speaker_company}` : ''}
-      </p>
-      <p>{blok.abstract}</p>
-      {blok.topics?.length ? <p className="talk-topics">{blok.topics.join(' · ')}</p> : null}
+  const facts = [
+    ['Day', blok.day?.replace('day-', '')],
+    ['Starts', blok.start_time],
+    ['Room', blok.room],
+    ['Length', blok.duration && `${blok.duration} min`],
+  ].filter((fact): fact is [string, string] => Boolean(fact[1]));
 
-      <section className="related">
-        <h2>Related talks</h2>
+  return (
+    <main {...storyblokEditable(blok)} className="talk" data-day={blok.day}>
+      <article className="talk-body">
+        <header className="talk-hero">
+          {blok.topics?.length ? (
+            <ul className="talk-topics" aria-label="Topics">
+              {blok.topics.map((topic) => (
+                <li key={topic} data-topic={topic}>
+                  {topic}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {blok.level ? (
+            <p className="talk-level">
+              <span className="visually-hidden">Level: </span>
+              {blok.level}
+            </p>
+          ) : null}
+          <h1>{blok.title}</h1>
+          {blok.speaker_name ? (
+            <p className="talk-speaker">
+              <span className="talk-speaker-mark" aria-hidden="true">
+                {initials(blok.speaker_name)}
+              </span>
+              <span className="talk-speaker-name">{blok.speaker_name}</span>
+              {blok.speaker_company ? <span className="talk-speaker-company">{blok.speaker_company}</span> : null}
+            </p>
+          ) : null}
+        </header>
+        {facts.length ? (
+          <div className="talk-ticket">
+            <dl>
+              {facts.map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        ) : null}
+        <p className="talk-abstract">{blok.abstract}</p>
+      </article>
+
+      <section className="related" aria-labelledby="related-heading">
+        <h2 id="related-heading">
+          <span>Related talks</span>
+        </h2>
         {picks.length === 0 ? (
           <p className="related-empty">No related talks yet.</p>
         ) : (
@@ -65,6 +112,6 @@ export default async function Talk({ blok }: { blok: TalkBlok }) {
           </ul>
         )}
       </section>
-    </article>
+    </main>
   );
 }
